@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% block content %}
+    <div class="container">
+        <h1>Welcome to IT Faculty Poll System</h1>
+        <br/><br/>
+        <form class="form-inline" method="GET" action="{% url 'index' %}">
+            <div class="form-group">
+                <label for="search">Search Poll:</label>
+                <input type="text" class="form-control ml-3" id="search" 
+                    name="search" placeholder="Search" value="{{search}}">
+            </div>
+            <button type="submit" class="btn btn-primary ml-3">Submit</button>
+        </form>
+        <br/><br/>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th scope="col">ชื่อ Poll</th>
+                    <th scope="col">วันเริ่ม</th>
+                    <th scope="col">วันสิ้นสุด</th>
+                    <th scope="col">จำนวนคำถาม</th>
+                    <th scope="col">รายละเอียด</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for poll in poll_list %}
+                <tr>
+                    <td>{{ poll.title }}</td>
+                    <td>{{ poll.start_date }}</td>
+                    <td>{{ poll.end_date }}</td>
+                    <td>{{ poll.question_count }}</td>
+                    <td>
+                        <a href="{% url 'poll_detail' poll_id=poll.id %}">
+                            <div class="btn btn-warning">View detail</div>
+                        </a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endblock %}
+
+{% block footer %}
+    Footer of index page!!!
+{% endblock %}

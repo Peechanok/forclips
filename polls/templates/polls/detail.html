@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Poll Name: {{ poll.title }}</h1>
+<p><b>Start Date: </b> {{ poll.start_date|date:"l, j F Y" }}</p>
+<p><b>End Date: </b> {{ poll.end_date|date:"l, j F Y" }}</p>
+<p><b>Number of Questions :</b> {{ poll.question_set.count|default:"No questions" }}</p>
+<hr>
+<h3>Questions</h3>
+{% for question in poll.question_set.all %}
+<div class="row mb-2">
+    <div class="col-4">
+        {{question.text}}
+        <ul>
+            {% for choice in question.choice_set.all %}
+                <li>{{ choice.text }} : {{choice.value}}</li>
+            {% endfor %}
+        </ul>
+    </div>
+    <div class="col-2">
+        {% if question.question_type == '01' %}
+            Single answer
+        {% else %}
+            Multiple answer
+        {% endif %}
+    </div>
+</div>
+{% endfor %}
+<hr>
+{% endblock content %}
+
