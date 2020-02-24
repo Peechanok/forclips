@@ -11,13 +11,24 @@ from polls.models import Answer, Poll, Question
 # Create your views here.
 def my_login(request):
     context = {}
-
     return render(request, template_name='login.html', context=context)
 
 
 def my_logout(request):
     logout(request)
     return redirect('login')
+
+
+def change_password(request):
+    if request.method == 'POST':
+        user = request.user
+        password1 = request.POST.get('password1')
+        password1 = request.POST.get('password2')
+        # check that the passwords match
+
+        # reset password 
+
+    return render(request, template_name='change_password.html')
 
 
 def index(request):
