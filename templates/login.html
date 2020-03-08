@@ -3,7 +3,11 @@
     <div class="container">
         <h1>Login to IT Faculty Poll System</h1>
         <br/><br/>
-        <form method="GET" action="{% url 'index' %}">
+        {% if error %}
+            <p class="text-danger">{{error}}</p>
+        {% endif %}
+        <form method="POST" action="{% url 'login' %}">
+            {% csrf_token %}
             <div class="form-group">
                 <label for="username">Username:</label>
                 <input type="text" class="form-control ml-3" id="username" 
@@ -15,6 +19,7 @@
                     name="password" value="{{password}}">
             </div>
             <button type="submit" class="btn btn-primary ml-3">Login</button>
+            <input type="hidden" name="next_url" value="{{next_url}}">
         </form>
         <br/><br/>
     </div>

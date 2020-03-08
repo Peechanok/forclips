@@ -37,5 +37,5 @@ class Choice(models.Model):
 
 
 class Answer(models.Model):
-    choice = models.ForeignKey(Choice, on_delete=models.CASCADE)
+    choice = models.OneToOneField(Choice, on_delete=models.CASCADE)
     question = models.ForeignKey(Question, on_delete=models.CASCADE)

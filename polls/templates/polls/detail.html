@@ -6,25 +6,29 @@
 <p><b>Number of Questions :</b> {{ poll.question_set.count|default:"No questions" }}</p>
 <hr>
 <h3>Questions</h3>
-{% for question in poll.question_set.all %}
-<div class="row mb-2">
-    <div class="col-4">
-        {{question.text}}
-        <ul>
-            {% for choice in question.choice_set.all %}
-                <li>{{ choice.text }} : {{choice.value}}</li>
-            {% endfor %}
-        </ul>
+<form method="POST" action="{% url 'poll_detail' poll_id=poll.id %}">
+    {% csrf_token %}
+    {% for question in poll.question_set.all %}
+    <div class="row mb-2">
+        <div class="col-6">
+            {{question.text}}
+            <ul>
+                {% for choice in question.choice_set.all %}
+                    <li style="list-style-type:none;">
+                        &nbsp;<input type="radio">{{ choice.text }}
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
     </div>
-    <div class="col-2">
-        {% if question.question_type == '01' %}
-            Single answer
-        {% else %}
-            Multiple answer
-        {% endif %}
+    {% endfor %}
+    <div class="row mb-2">
+        <div class="col">
+            <button class="btn btn-primary" type="submit">Save</button>
+            <button class="btn btn-warning" type="button" onclick="window.location = '/polls/index/'">Back</button>
+        </div>
     </div>
-</div>
-{% endfor %}
+</form>
 <hr>
 {% endblock content %}
 
