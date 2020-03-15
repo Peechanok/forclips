@@ -8,5 +8,5 @@ urlpatterns = [
     path('manage/', views.manage, name='poll_manage'),
     path('create/', views.create, name='poll_create'),
     path('update/<int:poll_id>/', views.update, name='poll_update'),
-    # path('delete/<int:poll_id>/', views.delete, name='poll_delete'),
+    path('delete/<int:poll_id>/', views.delete, name='poll_delete'),
 ]

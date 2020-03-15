@@ -159,6 +159,14 @@ def update(request, poll_id):
         'success': success
     })
 
+@login_required
+@permission_required('polls.delete_poll')
+def delete(request, poll_id):
+    poll = Poll.objects.get(pk=poll_id)
+    poll.del_flag = True
+    poll.save()
+    
+    return redirect('manage')
 
 @login_required
 @permission_required('polls.add_poll')

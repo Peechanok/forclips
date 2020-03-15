@@ -47,7 +47,7 @@
             <td>{{poll.end_date}}</td>
             <td>
                 <a href="{% url 'poll_update' poll.id %}"><div class="btn btn-sm btn-warning">แก้ไข</div></a>
-                <a href="#"><div class="btn btn-sm btn-danger">ลบ</div></a>
+                <a href="{% url 'poll_delete' poll.id %}"><div class="btn btn-sm btn-danger">ลบ</div></a>
             </td>
         </tr>
     {% endfor %}
