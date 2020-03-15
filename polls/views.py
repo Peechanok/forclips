@@ -135,6 +135,32 @@ def create(request):
     })
 
 @login_required
+@permission_required('polls.change_poll')
+def update(request, poll_id):
+    poll = Poll.objects.get(pk=poll_id)
+    success = ''
+    if request.method == 'POST':
+        form = PollForm(request.POST)
+        if form.is_valid():
+            poll.title = form.cleaned_data['title']
+            poll.start_date = form.cleaned_data['start_date']
+            poll.end_date = form.cleaned_data['end_date']
+            success = 'แก้ไขข้อมูลสำเร็จ'
+    else:
+        form = PollForm(initial={
+            'title': poll.title,
+            'start_date': poll.start_date,
+            'end_date': poll.end_date,
+        })
+    
+    return render(request, 'polls/update.html', context={
+        'form': form, 
+        'poll': poll,
+        'success': success
+    })
+
+
+@login_required
 @permission_required('polls.add_poll')
 def manage(request):
     form = PollSearchForm(request.GET)

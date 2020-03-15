@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>แก้ไข Poll ID: {{poll.id}}</h1>
+<form method="POST" action="{% url 'poll_update' poll.id %}">
+{% csrf_token %}
+{% if success %}
+<div class="row">
+    <div class="col text-success">
+        {{success}}
+    </div>
+</div>
+{% endif %}
+{% for field in form %}
+<div class="form-group">
+    {{field.errors}}
+    <label for="{{field.id_for_label}}">{{field.label}}</label>
+    {{field}}
+</div>
+{% endfor %}
+<p>
+    <button class="btn btn-primary" type="submit">บันทึกข้อมูล</button>
+</p>
+</form>
+<hr>
+{% if poll.question_set.count %}
+<h3>Questions</h3>
+    {% for question in poll.question_set.all %}
+    <div class="row mb-2">
+        <div class="col-6">
+            {{question.text}}
+            <ul>
+                {% for choice in question.choice_set.all %}
+                    <li style="list-style-type:none;">{{ choice.text }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+    {% endfor %}
+<hr>
+{% endif %}
+{% endblock content %}
+
