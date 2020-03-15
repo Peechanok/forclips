@@ -1,14 +1,14 @@
 import json
 
 from django.contrib.auth import authenticate, login, logout
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, permission_required
 from django.db.models import Count
 from django.forms import formset_factory
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import redirect, render
 
+from polls.forms import PollForm, PollSearchForm
 from polls.models import Answer, Poll, Question
-from polls.forms import PollForm
 
 
 # Create your views here.
@@ -115,6 +115,7 @@ def detail(request, poll_id):
     return render(request, 'polls/detail.html', { 'poll': poll, 'questions': questions })
 
 @login_required
+@permission_required('polls.add_poll')
 def create(request):
     if request.method == 'POST':
         form = PollForm(request.POST)
@@ -131,4 +132,32 @@ def create(request):
     
     return render(request, 'polls/create.html', context={
         'form': form
+    })
+
+@login_required
+@permission_required('polls.add_poll')
+def manage(request):
+    form = PollSearchForm(request.GET)
+    error = ''
+
+    if form.is_valid():
+        title = form.cleaned_data.get('title')
+        sdate = form.cleaned_data.get('start_date')
+        edate = form.cleaned_data.get('end_date')
+
+        polls = Poll.objects.filter(title__icontains=title)
+        if sdate and edate:
+            case1 = polls.filter(start_date__lte=sdate, end_date__gte=sdate)
+            case2 = polls.filter(start_date__lte=edate, end_date__gte=edate)
+            case3 = polls.filter(start_date__gt=sdate, end_date__lt=edate)
+            polls = case1 | case2 | case3
+        else:
+            error = 'ต้องกรอกทั้งวันเริ่มและวันสิ้นสุด'
+    else:
+        polls = Poll.objects.filter(del_flag=False)
+    
+    return render(request, 'polls/manage.html', context={
+        'form': form,
+        'polls': polls,
+        'error': error
     })

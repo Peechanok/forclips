@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>จัดการข้อมูล Poll</h1>
+<form method="GET" action="{% url 'poll_manage' %}">
+
+{% if error %}
+<div class="row">
+    <div class="col text-danger">
+        {{error}}
+    </div>
+</div>
+{% endif %}
+<div class="row">
+    {% for field in form %}
+    <div class="col">
+        {{field.errors}}
+        <label for="{{field.id_for_label}}">{{field.label}}</label>
+        {{field}}
+    </div>
+    {% endfor %}
+    <div class="col">
+        <button class="btn btn-lg btn-primary mt-4" type="submit">ค้นหา</button>
+        <a href="{% url 'poll_create' %}"><div class="btn btn-lg btn-warning mt-4">เพิ่ม poll ใหม่</div></a>
+    </div>
+</div>
+
+</form>
+<hr>
+{% if polls.count %}
+<h3>รายการ poll</h3>
+<table class="table">
+    <thead>
+        <tr>
+            <th scope="col">#</th>
+            <th scope="col">ชื่อ poll</th>
+            <th scope="col">วันเริ่มเปิดโหวต</th>
+            <th scope="col">วันสิ้นสุดการโหวต</th>
+            <th scope="col"></th>
+        </tr>
+    </thead>
+    <tbody>
+    {% for poll in polls %}
+        <tr>
+            <td>{{forloop.counter}}</td>
+            <td>{{poll.title}}</td>
+            <td>{{poll.start_date}}</td>
+            <td>{{poll.end_date}}</td>
+            <td>
+                <a href="#"><div class="btn btn-sm btn-warning">แก้ไข</div></a>
+                <a href="#"><div class="btn btn-sm btn-danger">ลบ</div></a>
+            </td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
+<hr>
+{% endif %}
+{% endblock content %}
+

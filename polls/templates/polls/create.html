@@ -17,7 +17,6 @@
 <hr>
 {% if poll.question_set.count %}
 <h3>Questions</h3>
-    {% csrf_token %}
     {% for question in poll.question_set.all %}
     <div class="row mb-2">
         <div class="col-6">
