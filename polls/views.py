@@ -8,6 +8,7 @@ from django.http import HttpResponse, JsonResponse
 from django.shortcuts import redirect, render
 
 from polls.models import Answer, Poll, Question
+from polls.forms import PollForm
 
 
 # Create your views here.
@@ -29,7 +30,6 @@ def my_login(request):
             context['error'] = 'Wrong username or password!'
 
     return render(request, template_name='login.html', context=context)
-
 
 def my_logout(request):
     logout(request)
@@ -68,7 +68,6 @@ def index(request):
     }
 
     return render(request, template_name='polls/index.html', context=context)
-
 
 @login_required
 def detail(request, poll_id):
@@ -114,3 +113,22 @@ def detail(request, poll_id):
                 pass
         
     return render(request, 'polls/detail.html', { 'poll': poll, 'questions': questions })
+
+@login_required
+def create(request):
+    if request.method == 'POST':
+        form = PollForm(request.POST)
+        if form.is_valid():
+            Poll.objects.create(
+                title=form.cleaned_data['title'],
+                start_date=form.cleaned_data['start_date'],
+                end_date=form.cleaned_data['end_date'],
+                del_flag=False
+            )
+            return redirect('index')
+    else:
+        form = PollForm()
+    
+    return render(request, 'polls/create.html', context={
+        'form': form
+    })
