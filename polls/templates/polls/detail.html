@@ -8,14 +8,22 @@
 <h3>Questions</h3>
 <form method="POST" action="{% url 'poll_detail' poll_id=poll.id %}">
     {% csrf_token %}
-    {% for question in poll.question_set.all %}
+    {% for question in questions %}
     <div class="row mb-2">
         <div class="col-6">
             {{question.text}}
             <ul>
                 {% for choice in question.choice_set.all %}
                     <li style="list-style-type:none;">
-                        &nbsp;<input type="radio">{{ choice.text }}
+                        &nbsp;
+                        <input 
+                         type="radio" 
+                         name="choice{{question.id}}" 
+                         value="{{choice.id}}"
+                         {% if question.selected_answer.choice.id == choice.id %}
+                            checked
+                         {% endif %}
+                        >{{ choice.text }}
                     </li>
                 {% endfor %}
             </ul>

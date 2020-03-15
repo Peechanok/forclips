@@ -1,7 +1,7 @@
 from django.db import models
+from django.contrib.auth.models import User
 
 
-# Create your models here.
 class Poll(models.Model):
     title = models.CharField(max_length=100)
     start_date = models.DateField(null=True, blank=True)
@@ -37,5 +37,11 @@ class Choice(models.Model):
 
 
 class Answer(models.Model):
-    choice = models.OneToOneField(Choice, on_delete=models.CASCADE)
+    choice = models.ForeignKey(Choice, on_delete=models.CASCADE)
     question = models.ForeignKey(Question, on_delete=models.CASCADE)
+    answer_by = models.ForeignKey(User, on_delete=models.CASCADE)
+    answer_date = models.DateTimeField(auto_now_add=True)
+    
+    class Meta:
+        # กำหนด constraint unique_together ว่า user หนึ่งจะสามารถตอบคำถามข้อใดๆ ได้เพียง 1 ครั้ง
+        unique_together = ['question', 'answer_by']

@@ -73,5 +73,44 @@ def index(request):
 @login_required
 def detail(request, poll_id):
     poll = Poll.objects.get(pk=poll_id)
+    questions = poll.question_set.all()
 
-    return render(request, 'polls/detail.html', { 'poll': poll })
+    for question in questions:
+        if request.method == 'POST':
+            name = 'choice%s' % (question.id)
+            choice_id = request.POST.get(name)
+
+            if not choice_id:
+                # ถ้าไม่มีการเลือกคำตอบมาก็ไม่ต้องทำอะไร
+                break
+
+            try:
+                # เคยตอบ question ข้อนี้มาแล้ว update ตัวเลือก (choice)
+                answer = Answer.objects.get(
+                    answer_by_id=request.user.id, 
+                    question_id=question.id
+                )
+                answer.choice_id = choice_id
+                answer.save()
+            except Answer.DoesNotExist:
+                # ถ้ายังไม่เคยมีการตอบมาก่อนสร้างคำตอบใหม่ create Answer
+                answer = Answer.objects.create(
+                    choice_id=choice_id, 
+                    question_id=question.id, 
+                    answer_by_id=request.user.id
+                )
+            
+            question.selected_answer = answer
+        
+        else:
+            # Set ค่าคำตอบของคำถามแต่ละข้อ
+            try:
+                question.selected_answer = Answer.objects.get(
+                    answer_by_id=request.user.id,
+                    question_id=question.id
+                )
+                print(question.selected_answer)
+            except Answer.DoesNotExist:
+                pass
+        
+    return render(request, 'polls/detail.html', { 'poll': poll, 'questions': questions })
