@@ -1,6 +1,7 @@
 from datetime import datetime
 
 from django import forms
+from .models import Poll
 
 
 def validate_past_date(value):
@@ -11,14 +12,22 @@ def validate_past_date(value):
 
 
 # Create your forms here
-class PollForm(forms.Form):
-    title = forms.CharField(max_length=100, label='หัวข้อ')
-    start_date = forms.DateField(required=False, label='วันเริ่มเปิดโหวต', validators=[validate_past_date])
-    end_date = forms.DateField(required=False, label='วันสิ้นสุดการโหวต', validators=[validate_past_date])
+class PollModelForm(forms.ModelForm):
+    start_date = forms.DateField(
+        validators=[validate_past_date], 
+        widget=forms.DateInput(attrs={ 'class' : 'form-control' })
+    )
+    end_date = forms.DateField(
+        validators=[validate_past_date], 
+        widget=forms.DateInput(attrs={ 'class' : 'form-control' })
+    )
 
-    title.widget.attrs.update({'class': 'form-control'})
-    start_date.widget.attrs.update({'class': 'form-control'})
-    end_date.widget.attrs.update({'class': 'form-control'})
+    class Meta:
+        model = Poll
+        fields = ('title', 'start_date', 'end_date')
+        widgets = {
+            'title': forms.TextInput(attrs={ 'class' : 'form-control' })
+        }
 
     # def clean_start_date(self):
     #     data = self.cleaned_data.get('start_date')

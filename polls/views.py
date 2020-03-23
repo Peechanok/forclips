@@ -7,7 +7,7 @@ from django.forms import formset_factory
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import redirect, render
 
-from polls.forms import PollForm, PollSearchForm
+from polls.forms import PollModelForm, PollSearchForm
 from polls.models import Answer, Poll, Question
 
 
@@ -118,17 +118,12 @@ def detail(request, poll_id):
 @permission_required('polls.add_poll')
 def create(request):
     if request.method == 'POST':
-        form = PollForm(request.POST)
+        form = PollModelForm(request.POST)
         if form.is_valid():
-            Poll.objects.create(
-                title=form.cleaned_data['title'],
-                start_date=form.cleaned_data['start_date'],
-                end_date=form.cleaned_data['end_date'],
-                del_flag=False
-            )
-            return redirect('index')
+            form.save()
+            return redirect('poll_manage')
     else:
-        form = PollForm()
+        form = PollModelForm()
     
     return render(request, 'polls/create.html', context={
         'form': form
@@ -140,18 +135,11 @@ def update(request, poll_id):
     poll = Poll.objects.get(pk=poll_id)
     success = ''
     if request.method == 'POST':
-        form = PollForm(request.POST)
+        form = PollModelForm(request.POST, instance=poll)
         if form.is_valid():
-            poll.title = form.cleaned_data['title']
-            poll.start_date = form.cleaned_data['start_date']
-            poll.end_date = form.cleaned_data['end_date']
-            success = 'แก้ไขข้อมูลสำเร็จ'
+            form.save()
     else:
-        form = PollForm(initial={
-            'title': poll.title,
-            'start_date': poll.start_date,
-            'end_date': poll.end_date,
-        })
+        form = PollModelForm(instance=poll)
     
     return render(request, 'polls/update.html', context={
         'form': form, 
