@@ -1,4 +1,7 @@
+from datetime import datetime
+
 from django import forms
+
 
 # Create your forms here
 class PollForm(forms.Form):
@@ -9,6 +12,37 @@ class PollForm(forms.Form):
     title.widget.attrs.update({'class': 'form-control'})
     start_date.widget.attrs.update({'class': 'form-control'})
     end_date.widget.attrs.update({'class': 'form-control'})
+
+    def clean_start_date(self):
+        data = self.cleaned_data.get('start_date')
+        
+        if data < datetime.now().date():
+            raise forms.ValidationError(
+                'วันเริ่มต้นต้องเป็นวันหลังวันปัจจุบัน'
+            )
+        return data
+    
+    def clean_end_date(self):
+        data = self.cleaned_data.get('end_date')
+        
+        if data < datetime.now().date():
+            raise forms.ValidationError(
+                'วันสิ้นสุดต้องเป็นวันหลังวันปัจจุบัน'
+            )
+        return data
+    
+    def clean(self):
+        cleaned_data = super().clean()
+        print(cleaned_data)
+        start_date = cleaned_data.get('start_date')
+        end_date = cleaned_data.get('end_date')
+        
+        if start_date and end_date:
+            if start_date > end_date:
+                raise forms.ValidationError(
+                    'วันสิ้นสุดจะต้องเป็นวันหลังวันเริ่มต้น'
+                )
+
 
 class PollSearchForm(forms.Form):
     title = forms.CharField(max_length=100, required=False, label='ค้นหาหัวข้อ')
