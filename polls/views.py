@@ -7,7 +7,7 @@ from django.forms import formset_factory
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import redirect, render
 
-from polls.forms import PollModelForm, PollSearchForm
+from polls.forms import PollModelForm, PollSearchForm, QuestionModelForm, ChoiceModelForm
 from polls.models import Answer, Poll, Question
 
 
@@ -154,7 +154,7 @@ def delete(request, poll_id):
     poll.del_flag = True
     poll.save()
     
-    return redirect('manage')
+    return redirect('poll_manage')
 
 @login_required
 @permission_required('polls.add_poll')
@@ -182,4 +182,39 @@ def manage(request):
         'form': form,
         'polls': polls,
         'error': error
+    })
+
+@login_required
+@permission_required('polls.add_poll')
+def question_create(request, poll_id):
+    poll = Poll.objects.get(pk=poll_id)
+    ChoiceModelFormSet = formset_factory(ChoiceModelForm, extra=4)
+
+    if request.method == 'POST':
+        form = QuestionModelForm(request.POST)
+        formset = ChoiceModelFormSet(request.POST)
+        success = True
+
+        if form.is_valid():
+            question = form.save(commit=False)
+            question.poll = poll
+            question.save()
+            for choice_form in formset:
+                if choice_form.is_valid():
+                    choice = choice_form.save(commit=False)
+                    choice.question = question
+                    choice.save()
+                else:
+                    success = False
+
+            if success:
+                return redirect('poll_manage')
+    else:
+        form = QuestionModelForm()
+        formset = ChoiceModelFormSet()
+
+    return render(request, 'questions/create.html', context={
+        'form': form,
+        'formset': formset,
+        'poll': poll
     })

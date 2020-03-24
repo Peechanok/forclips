@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Poll: {{poll.title}}</h1>
+<hr>
+<h2>สร้าง Question ใหม่</h2>
+<form method="POST" action="{% url 'question_create' poll_id=poll.id %}">
+{% csrf_token %}
+    {{ form.non_field_errors }}
+    <div class="row"> 
+        <div class="col">
+            {% for field in form %}
+            <div class="form-group">
+                {{field.errors}}
+                <label for="{{field.id_for_label}}">{{field.label}}</label>
+                {{field}}
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    <hr/>
+    <h3>รายการคำตอบ</h3>
+    {{ formset.management_form }}
+    {% for form in formset %}
+    {% if form.non_field_errors %}
+    <div class="row"> 
+        <div class="col">{{ form.non_field_errors }}</div>
+    </div>
+    {% endif %}
+    <div class="row">
+        {% for field in form %}
+        <div class="form-group col">
+            {{field.errors}}
+            <label for="{{field.id_for_label}}">{{field.label}}</label>
+            {{field}}
+        </div>
+        {% endfor %}
+    </div>
+    {% endfor %}
+    <p><button class="btn btn-primary" type="submit">บันทึกข้อมูล</button></p>
+</form>
+{% endblock content %}
+

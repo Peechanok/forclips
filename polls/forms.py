@@ -1,7 +1,8 @@
 from datetime import datetime
 
 from django import forms
-from .models import Poll
+
+from .models import Poll, Question, Choice
 
 
 def validate_past_date(value):
@@ -68,3 +69,31 @@ class PollSearchForm(forms.Form):
     title.widget.attrs.update({'class': 'form-control'})
     start_date.widget.attrs.update({'class': 'form-control'})
     end_date.widget.attrs.update({'class': 'form-control'})
+
+
+class QuestionModelForm(forms.ModelForm):
+    class Meta:
+        model = Question
+        fields = ('text', 'question_type')
+        labels = {
+            'text': 'คำถาม',
+            'question_type':'ประเภทคำถาม'
+        }
+        widgets = {
+            'text': forms.Textarea(attrs={ 'class' : 'form-control' }),
+            'question_type': forms.Select(attrs={ 'class' : 'custom-select' })
+        }
+
+
+class ChoiceModelForm(forms.ModelForm):
+    class Meta:
+        model = Choice
+        fields = ('text', 'value')
+        labels = {
+            'text': 'ข้อคำตอบ',
+            'value':'ค่า'
+        }
+        widgets = {
+            'text': forms.TextInput(attrs={ 'class' : 'form-control' }),
+            'value': forms.TextInput(attrs={ 'class' : 'form-control' })
+        }

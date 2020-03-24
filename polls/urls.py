@@ -9,4 +9,6 @@ urlpatterns = [
     path('create/', views.create, name='poll_create'),
     path('update/<int:poll_id>/', views.update, name='poll_update'),
     path('delete/<int:poll_id>/', views.delete, name='poll_delete'),
+
+    path('<int:poll_id>/question/create/', views.question_create, name='question_create'),
 ]
