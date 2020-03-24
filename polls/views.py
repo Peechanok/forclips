@@ -255,16 +255,16 @@ def question_update(request, question_id):
                         choice = choice_form.save(commit=False)
                         choice.question = question
                         choice.save()
-
-    form = QuestionModelForm(instance=question)
-    data = []
-    for choice in question.choice_set.all():
-        data.append({
-            'id': choice.id,
-            'text': choice.text,
-            'value': choice.value
-        })
-    formset = ChoiceModelFormSet(initial=data)
+    else:
+        form = QuestionModelForm(instance=question)
+        data = []
+        for choice in question.choice_set.all():
+            data.append({
+                'id': choice.id,
+                'text': choice.text,
+                'value': choice.value
+            })
+        formset = ChoiceModelFormSet(initial=data)
 
     return render(request, 'questions/update.html', context={
         'form': form,
