@@ -24,6 +24,7 @@
 <hr>
 {% if poll.question_set.count %}
 <h3>Questions</h3>
+<a class="btn btn-success my-3" href="{% url 'question_create' poll_id=poll.id %}">เพิ่มคำถามใหม่</a>
     {% for question in poll.question_set.all %}
     <div class="row mb-2">
         <div class="col-6">
@@ -33,6 +34,9 @@
                     <li style="list-style-type:none;">{{ choice.text }}</li>
                 {% endfor %}
             </ul>
+        </div>
+        <div class="col-3">
+            <a class="btn btn-warning" href="{% url 'question_update' question_id=question.id %}">แก้ไขข้อมูลคำถาม</a>
         </div>
     </div>
     {% endfor %}
