@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Poll: {{poll.title}}</h1>
+<hr>
+<h2>แก้ไข Question</h2>
+<form method="POST" action="{% url 'question_update' question_id=question.id %}">
+{% csrf_token %}
+    {{ form.non_field_errors }}
+    <div class="row"> 
+        <div class="col">
+            {% for field in form %}
+            <div class="form-group">
+                {{field.errors}}
+                <label for="{{field.id_for_label}}">{{field.label}}</label>
+                {{field}}
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    <hr/>
+    <h3>รายการคำตอบ</h3>
+    {{ formset.management_form }}
+    {% for form in formset %}
+    {% if form.non_field_errors %}
+    <div class="row"> 
+        <div class="col">{{ form.non_field_errors }}</div>
+    </div>
+    {% endif %}
+    <div class="row">
+        {{form.id}}
+        {% for field in form.visible_fields %}
+        <div class="form-group col">
+            {{field.errors}}
+            <label for="{{field.id_for_label}}">{{field.label}}</label>
+            {{field}}
+        </div>
+        {% endfor %}
+    </div>
+    {% endfor %}
+    <p>
+        <a class="btn btn-warning" href="{% url 'question_update' question_id=question.id %}?extra={{extra}}">เพิ่มข้อตัวเลือก</a>
+        <button class="btn btn-primary" type="submit">บันทึกข้อมูล</button>
+    </p>
+</form>
+{% endblock content %}
+

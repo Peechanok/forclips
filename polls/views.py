@@ -8,7 +8,7 @@ from django.http import HttpResponse, JsonResponse
 from django.shortcuts import redirect, render
 
 from polls.forms import PollModelForm, PollSearchForm, QuestionModelForm, ChoiceModelForm
-from polls.models import Answer, Poll, Question
+from polls.models import Answer, Poll, Question, Choice
 
 
 # Create your views here.
@@ -185,7 +185,7 @@ def manage(request):
     })
 
 @login_required
-@permission_required('polls.add_poll')
+@permission_required('polls.add_question')
 def question_create(request, poll_id):
     poll = Poll.objects.get(pk=poll_id)
     ChoiceModelFormSet = formset_factory(ChoiceModelForm, extra=4)
@@ -217,4 +217,58 @@ def question_create(request, poll_id):
         'form': form,
         'formset': formset,
         'poll': poll
+    })
+
+
+@login_required
+@permission_required('polls.change_question')
+def question_update(request, question_id):
+    question = Question.objects.get(pk=question_id)
+    # Get ค่า extra กรณีที่กดเพิ่มข้อตัวเลือก
+    extra = int(request.GET.get('extra', 0)) + 2
+    ChoiceModelFormSet = formset_factory(ChoiceModelForm, extra=extra)
+
+    if request.method == 'POST':
+        form = QuestionModelForm(request.POST, instance=question)
+        formset = ChoiceModelFormSet(request.POST)
+
+        if form.is_valid():
+            question = form.save()
+
+            for choice_form in formset:
+                
+                if choice_form.is_valid():
+                    print(choice_form.cleaned_data)
+                    if choice_form.cleaned_data.get('id'):
+                        choice = Choice.objects.get(pk=choice_form.cleaned_data.get('id'))
+                        if choice_form.cleaned_data.get('del_flag'):
+                            # Delete
+                            choice.delete()
+                        else:
+                            # Update
+                            choice.text = choice_form.cleaned_data.get('text')
+                            choice.value = choice_form.cleaned_data.get('value')
+                            choice.question = question
+                            choice.save()
+                    elif choice_form.cleaned_data.get('text'):
+                        # Create new
+                        choice = choice_form.save(commit=False)
+                        choice.question = question
+                        choice.save()
+
+    form = QuestionModelForm(instance=question)
+    data = []
+    for choice in question.choice_set.all():
+        data.append({
+            'id': choice.id,
+            'text': choice.text,
+            'value': choice.value
+        })
+    formset = ChoiceModelFormSet(initial=data)
+
+    return render(request, 'questions/update.html', context={
+        'form': form,
+        'formset': formset,
+        'question': question,
+        'extra': extra
     })

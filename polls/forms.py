@@ -86,11 +86,14 @@ class QuestionModelForm(forms.ModelForm):
 
 
 class ChoiceModelForm(forms.ModelForm):
+    id = forms.IntegerField(widget=forms.HiddenInput(), required=False)
+    del_flag = forms.BooleanField(required=False, label='ลบตัวเลือก')
+
     class Meta:
         model = Choice
-        fields = ('text', 'value')
+        fields = ('id', 'text', 'value', 'del_flag')
         labels = {
-            'text': 'ข้อคำตอบ',
+            'text': 'ข้อตัวเลือก',
             'value':'ค่า'
         }
         widgets = {
