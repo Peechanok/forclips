@@ -35,6 +35,7 @@
             <th scope="col">ชื่อ poll</th>
             <th scope="col">วันเริ่มเปิดโหวต</th>
             <th scope="col">วันสิ้นสุดการโหวต</th>
+            <th scope="col">จำนวนคำถาม</th>
             <th scope="col"></th>
         </tr>
     </thead>
@@ -45,6 +46,7 @@
             <td>{{poll.title}}</td>
             <td>{{poll.start_date}}</td>
             <td>{{poll.end_date}}</td>
+            <td>{{poll.question_count}}</td>
             <td>
                 <a href="{% url 'poll_update' poll.id %}"><div class="btn btn-sm btn-warning">แก้ไข</div></a>
                 <a href="{% url 'poll_delete' poll.id %}"><div class="btn btn-sm btn-danger">ลบ</div></a>

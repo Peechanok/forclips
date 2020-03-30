@@ -178,8 +178,10 @@ def manage(request):
     else:
         polls = Poll.objects.filter(del_flag=False)
     
+    polls = polls.annotate(question_count=Count('question'))
+
     return render(request, 'polls/manage.html', context={
-        'form': form,
+        'search_form': form,
         'polls': polls,
         'error': error
     })
